@@ -38,12 +38,12 @@ async function isAdmin(req, res, next) {
     if (check.permissao == "ADMIN") {
       next()
     } else {
-      res.end("Unauthorized")
+      res.end("Não autorizado")
     }
 
 
   } catch {
-    res.send("Something went wrong")
+    res.send("Algo de errado não está certo")
   }
 }
 
@@ -76,12 +76,13 @@ app.patch('/users/:callerId', (req, res) => {
 
   users.find((o, i) => {
     if (JSON.stringify(o.id) === callerId) {
-        users[i] = {id: id, nome: nome, empresa: empresa, permissao: permissao };
-        return true;
+      users[i] = { id: id, nome: nome, empresa: empresa, permissao: permissao };
+      return true;
     } else {
       res.send("Esse id não existe")
+      return false
     }
-})
+  })
 
   res.send(users)
 })
@@ -90,14 +91,17 @@ app.delete('/users/:callerId', isAdmin, (req, res) => {
 
   let { callerId } = req.params
 
+  let { id } = req.body
+
   users.find((o, i) => {
-    if (JSON.stringify(o.id) === callerId) {
-       delete users[i]
-        return true;
+    if (o.id === id) {
+      delete users[i]
+      return true;
     } else {
       res.send("Não existe esse ID")
+      return false
     }
-})
+  })
 
   res.send(users)
 })
